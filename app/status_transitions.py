@@ -16,10 +16,8 @@ ALLOWED_TRANSITIONS: dict[TaskStatus, set[TaskStatus]] = {
     TaskStatus.cancelled: set(),
 }
 
-
 def is_allowed_transition(from_status: TaskStatus, to_status: TaskStatus) -> bool:
     return to_status in ALLOWED_TRANSITIONS.get(from_status, set())
-
 
 def get_transition_error_message(from_status: TaskStatus, to_status: TaskStatus) -> str:
     allowed = ALLOWED_TRANSITIONS.get(from_status, set())

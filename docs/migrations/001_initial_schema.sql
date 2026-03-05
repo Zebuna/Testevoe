@@ -1,10 +1,5 @@
--- Migration: 001_initial_schema.sql
--- PostgreSQL: initial schema for task tracker (no users table; user_id as integer)
--- Run as single transaction in your migration tool
-
 BEGIN;
 
--- Projects: owner_id is just integer (no auth)
 CREATE TABLE IF NOT EXISTS projects (
     id SERIAL PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
@@ -13,7 +8,6 @@ CREATE TABLE IF NOT EXISTS projects (
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
--- Project members (project_id, user_id as integers)
 CREATE TABLE IF NOT EXISTS project_members (
     id SERIAL PRIMARY KEY,
     project_id INTEGER NOT NULL REFERENCES projects(id) ON DELETE CASCADE,
@@ -22,7 +16,6 @@ CREATE TABLE IF NOT EXISTS project_members (
     UNIQUE (project_id, user_id)
 );
 
--- Tasks
 CREATE TYPE task_priority AS ENUM ('low', 'medium', 'high', 'critical');
 CREATE TYPE task_status AS ENUM ('created', 'in_progress', 'review', 'done', 'cancelled');
 
@@ -39,7 +32,6 @@ CREATE TABLE IF NOT EXISTS tasks (
     updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
--- History of status changes
 CREATE TABLE IF NOT EXISTS task_status_history (
     id SERIAL PRIMARY KEY,
     task_id INTEGER NOT NULL REFERENCES tasks(id) ON DELETE CASCADE,
@@ -49,7 +41,6 @@ CREATE TABLE IF NOT EXISTS task_status_history (
     changed_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
 
--- Indexes
 CREATE INDEX IF NOT EXISTS idx_projects_owner_id ON projects(owner_id);
 CREATE INDEX IF NOT EXISTS idx_project_members_project_id ON project_members(project_id);
 CREATE INDEX IF NOT EXISTS idx_project_members_user_id ON project_members(user_id);

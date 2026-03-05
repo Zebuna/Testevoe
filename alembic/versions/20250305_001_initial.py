@@ -10,7 +10,6 @@ from typing import Sequence, Union
 from alembic import op
 import sqlalchemy as sa
 
-# revision identifiers, used by Alembic.
 revision: str = "20250305_001"
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
@@ -18,7 +17,6 @@ depends_on: Union[str, Sequence[str], None] = None
 
 task_priority = sa.Enum("low", "medium", "high", "critical", name="task_priority")
 task_status = sa.Enum("created", "in_progress", "review", "done", "cancelled", name="task_status")
-
 
 def upgrade() -> None:
     op.create_table(
@@ -85,7 +83,6 @@ def upgrade() -> None:
         ["task_id", "changed_at"],
         unique=False,
     )
-
 
 def downgrade() -> None:
     op.drop_index(op.f("idx_task_status_history_changed_at"), table_name="task_status_history")

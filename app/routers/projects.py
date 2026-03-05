@@ -7,12 +7,10 @@ from app.schemas import ProjectCreate, ProjectResponse
 
 router = APIRouter(prefix="/projects", tags=["projects"])
 
-
 @router.post("/", response_model=ProjectResponse)
 async def project_create(payload: ProjectCreate, db: AsyncSession = Depends(get_db)):
     project = await create_project(db, payload)
     return ProjectResponse.model_validate(project)
-
 
 @router.get("/{project_id}", response_model=ProjectResponse)
 async def project_get(project_id: int, db: AsyncSession = Depends(get_db)):

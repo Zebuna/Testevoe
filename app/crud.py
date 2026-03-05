@@ -7,7 +7,6 @@ from app.models import Project, Task, TaskPriority, TaskStatus, TaskStatusHistor
 from app.schemas import ProjectCreate, TaskCreate, TaskUpdateStatus
 from app.status_transitions import is_allowed_transition
 
-
 async def create_project(db: AsyncSession, payload: ProjectCreate) -> Project:
     project = Project(name=payload.name, owner_id=payload.owner_id)
     db.add(project)
@@ -15,11 +14,9 @@ async def create_project(db: AsyncSession, payload: ProjectCreate) -> Project:
     await db.refresh(project)
     return project
 
-
 async def get_project_by_id(db: AsyncSession, project_id: int) -> Optional[Project]:
     result = await db.execute(select(Project).where(Project.id == project_id))
     return result.scalar_one_or_none()
-
 
 async def create_task(db: AsyncSession, payload: TaskCreate) -> Task:
     task = Task(
@@ -33,15 +30,12 @@ async def create_task(db: AsyncSession, payload: TaskCreate) -> Task:
     )
     db.add(task)
     await db.flush()
-    # Record initial status in history (optional: "created" -> "created" or skip; we skip until first change)
     await db.refresh(task)
     return task
-
 
 async def get_task_by_id(db: AsyncSession, task_id: int) -> Optional[Task]:
     result = await db.execute(select(Task).where(Task.id == task_id))
     return result.scalar_one_or_none()
-
 
 async def get_tasks(
     db: AsyncSession,
@@ -95,12 +89,11 @@ async def get_tasks(
     items = list(result.scalars().all())
     return items, total
 
-
 async def update_task_status(
     db: AsyncSession, task: Task, payload: TaskUpdateStatus
 ) -> tuple[Task, Optional[TaskStatusHistory]]:
     if not is_allowed_transition(task.status, payload.status):
-        return task, None  # caller will raise 400
+        return task, None 
 
     history_entry = TaskStatusHistory(
         task_id=task.id,
@@ -113,7 +106,6 @@ async def update_task_status(
     await db.flush()
     await db.refresh(task)
     return task, history_entry
-
 
 async def get_task_status_history(db: AsyncSession, task_id: int) -> list[TaskStatusHistory]:
     result = await db.execute(

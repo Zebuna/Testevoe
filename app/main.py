@@ -5,12 +5,10 @@ from fastapi import FastAPI
 from app.database import engine, get_db
 from app.routers import api_router
 
-
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     yield
     await engine.dispose()
-
 
 app = FastAPI(
     title="Task Tracker API",

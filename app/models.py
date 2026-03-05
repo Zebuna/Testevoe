@@ -7,13 +7,11 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base
 
-
 class TaskPriority(str, enum.Enum):
     low = "low"
     medium = "medium"
     high = "high"
     critical = "critical"
-
 
 class TaskStatus(str, enum.Enum):
     created = "created"
@@ -21,7 +19,6 @@ class TaskStatus(str, enum.Enum):
     review = "review"
     done = "done"
     cancelled = "cancelled"
-
 
 class Project(Base):
     __tablename__ = "projects"
@@ -33,7 +30,6 @@ class Project(Base):
     updated_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
 
     tasks: Mapped[list["Task"]] = relationship("Task", back_populates="project", cascade="all, delete-orphan")
-
 
 class Task(Base):
     __tablename__ = "tasks"
@@ -57,7 +53,6 @@ class Task(Base):
     status_history: Mapped[list["TaskStatusHistory"]] = relationship(
         "TaskStatusHistory", back_populates="task", order_by="TaskStatusHistory.changed_at", cascade="all, delete-orphan"
     )
-
 
 class TaskStatusHistory(Base):
     __tablename__ = "task_status_history"
